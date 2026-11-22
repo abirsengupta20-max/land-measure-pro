@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#123b35">
+<meta name="description" content="Bigha, Dismil, Acre and Square Feet land measurement calculator">
+<link rel="manifest" href="manifest.json">
+<title>Land Measure Pro</title>
+<style>
+:root{--ink:#152b28;--muted:#637672;--green:#123b35;--mint:#e8f5ef;--gold:#f2bd57;--bg:#f3f6f4;--line:#dce6e1}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans Bengali",Arial,sans-serif}
+header{background:linear-gradient(135deg,#123b35,#226b58);color:white;padding:25px 18px 28px;border-radius:0 0 25px 25px}
+.top{max-width:760px;margin:auto}.brand{font-size:12px;letter-spacing:2px;color:#bde2d2;font-weight:800}.hero{font-size:26px;font-weight:850;margin:8px 0 5px}.sub{font-size:13px;color:#d6e9e1}
+main{max-width:760px;margin:-12px auto 30px;padding:0 13px}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:17px;margin:13px 0;box-shadow:0 6px 20px #183d3210}
+h2{font-size:17px;margin:0 0 13px}.hint{font-size:12px;color:var(--muted);line-height:1.6}
+label{display:block;font-size:13px;font-weight:750;margin:12px 0 6px}
+input,select{width:100%;padding:13px 12px;border:1px solid #cbd9d2;border-radius:11px;font-size:16px;background:#fff;color:var(--ink);outline-color:#2b8a6d}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btns{display:flex;gap:9px;margin-top:14px;flex-wrap:wrap}
+button{border:0;border-radius:11px;padding:12px 15px;font-weight:800;font-size:14px;cursor:pointer}
+.primary{background:var(--green);color:white;flex:1}.secondary{background:var(--mint);color:var(--green)}
+.results{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.metric{background:#f3f8f5;padding:12px;border-radius:12px;min-width:0}.metric small{display:block;color:var(--muted);font-size:11px}.metric strong{display:block;font-size:19px;margin-top:4px;overflow-wrap:anywhere}
+.metric.wide{grid-column:1/-1;background:#e8f5ef}
+.pill{display:inline-block;background:#fff4db;color:#76500b;padding:5px 9px;border-radius:30px;font-size:11px;font-weight:800}
+table{width:100%;border-collapse:collapse;font-size:13px}td{padding:9px 5px;border-bottom:1px solid var(--line)}td:last-child{text-align:right;font-weight:750}
+.note{background:#fff8e9;border-left:4px solid var(--gold);padding:11px;border-radius:8px;font-size:12px;line-height:1.6}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:12px}
+@media(min-width:600px){.hero{font-size:32px}.card{padding:21px}}
+</style>
+</head>
+<body>
+<header><div class="top"><div class="brand">LAND MEASURE PRO</div><div class="hero">জমির হিসাব, এক জায়গায়</div><div class="sub">বিঘা • ডেসিমিল • একর • বর্গফুট — দ্রুত ও সহজ হিসাব</div></div></header>
+<main>
+<section class="card">
+<h2>১. জমির পরিমাণ থেকে হিসাব</h2>
+<div class="hint">প্রথমে আপনার এলাকার ১ বিঘার মাপ নির্বাচন করুন। ৩৩.৬ এবং ৪২—দুই নিয়মেই হিসাব করা যাবে।</div>
+<label for="standard">১ বিঘা = কত ডেসিমিল?</label>
+<select id="standard"><option value="33.6">৩৩.৬ ডেসিমিল (আপনার দেওয়া কলকাতা হিসাব)</option><option value="42">৪২ ডেসিমিল (বিকল্প স্থানীয় হিসাব)</option><option value="custom">নিজে মাপ লিখব</option></select>
+<div id="customWrap" hidden><label for="customBigha">১ বিঘার ডেসিমিল লিখুন</label><input id="customBigha" type="number" min="0.0001" step="any" value="33.6"></div>
+<div class="grid">
+<div><label for="amount">পরিমাণ</label><input id="amount" type="number" min="0" step="any" placeholder="যেমন 58"></div>
+<div><label for="unit">যে এককে লিখছেন</label><select id="unit"><option value="dismil">ডেসিমিল</option><option value="bigha">বিঘা</option><option value="acre">একর</option><option value="sqft">বর্গফুট</option></select></div>
+</div>
+<div class="btns"><button class="primary" onclick="calculate()">হিসাব করুন</button><button class="secondary" onclick="resetCalc()">রিসেট</button></div>
+<div id="output" style="margin-top:15px" aria-live="polite"><div class="hint">আপনার ফলাফল এখানে দেখা যাবে।</div></div>
+</section>
+
+<section class="card">
+<h2>২. জমির দৈর্ঘ্য × প্রস্থ থেকে হিসাব</h2>
+<div class="hint">জমি আয়তাকার হলে দৈর্ঘ্য ও প্রস্থ ফুটে লিখুন। অনিয়মিত জমির ক্ষেত্রে এই হিসাব আনুমানিক হবে।</div>
+<div class="grid">
+<div><label for="length">দৈর্ঘ্য (ফুট)</label><input id="length" type="number" min="0" step="any" placeholder="যেমন 100"></div>
+<div><label for="width">প্রস্থ (ফুট)</label><input id="width" type="number" min="0" step="any" placeholder="যেমন 50"></div>
+</div>
+<button class="primary" style="width:100%;margin-top:12px" onclick="areaCalc()">জমির আয়তন বের করুন</button>
+<div id="areaOutput" style="margin-top:13px" class="hint">দৈর্ঘ্য ও প্রস্থ দিলে ফলাফল দেখাবে।</div>
+</section>
+
+<section class="card">
+<h2>৩. দ্রুত রেফারেন্স</h2>
+<table>
+<tr><td>১ একর</td><td>১০০ ডেসিমিল</td></tr>
+<tr><td>১ ডেসিমিল</td><td>৪৩৫.৬ বর্গফুট</td></tr>
+<tr><td>১ একর</td><td>৪৩,৫৬০ বর্গফুট</td></tr>
+<tr><td>১ বিঘা</td><td id="refBigha">৩৩.৬ ডেসিমিল</td></tr>
+</table>
+<p class="note">গুরুত্বপূর্ণ: বিঘার মাপ অঞ্চলভেদে বদলায়। দলিল, রেকর্ড বা স্থানীয় ভূমি দপ্তরে ব্যবহৃত মাপ নিশ্চিত করে নিন। এই অ্যাপ আপনার নির্বাচিত ৩৩.৬ / ৪২ ডেসিমিল নিয়ম অনুসারে গণনা করে।</p>
+</section>
+<footer>LAND MEASURE PRO • Offline-ready calculator</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+function bighaSize(){
+ const s=$('standard').value;
+ if(s==='custom'){const v=Number($('customBigha').value);return v>0?v:NaN;}
+ return Number(s);
+}
+$('standard').addEventListener('change',()=>{
+ $('customWrap').hidden=$('standard').value!=='custom';
+ $('refBigha').textContent=bighaSize()+' ডেসিমিল';
+});
+$('customBigha').addEventListener('input',()=>{$('refBigha').textContent=(bighaSize()||'—')+' ডেসিমিল';});
+function fmt(v,d=4){return Number(v).toLocaleString('en-IN',{maximumFractionDigits:d});}
+function calculate(){
+ const n=Number($('amount').value), unit=$('unit').value, bs=bighaSize();
+ if($('amount').value.trim()===''||!Number.isFinite(n)||n<0||!Number.isFinite(bs)||bs<=0){$('output').innerHTML='<p class="note">সঠিক পরিমাণ এবং ১ বিঘার মাপ লিখুন।</p>';return;}
+ let dis=unit==='bigha'?n*bs:unit==='acre'?n*100:unit==='sqft'?n/435.6:n;
+ const big=dis/bs, acre=dis/100, sqft=dis*435.6;
+ const whole=Math.floor(big+1e-10), rem=dis-whole*bs;
+ $('output').innerHTML=`<div class="results">
+ <div class="metric"><small>বিঘা (দশমিক)</small><strong>${fmt(big,6)}</strong></div>
+ <div class="metric"><small>একর</small><strong>${fmt(acre,6)}</strong></div>
+ <div class="metric"><small>ডেসিমিল</small><strong>${fmt(dis,4)}</strong></div>
+ <div class="metric"><small>বর্গফুট</small><strong>${fmt(sqft,2)}</strong></div>
+ <div class="metric wide"><small>বিঘা + অবশিষ্ট ডেসিমিল</small><strong>${whole} বিঘা + ${fmt(rem,4)} ডেসিমিল</strong></div>
+ </div><p class="hint">হিসাবের ভিত্তি: ১ বিঘা = ${fmt(bs,4)} ডেসিমিল; ১ একর = ১০০ ডেসিমিল।</p>`;
+}
+function areaCalc(){
+ const l=Number($('length').value),w=Number($('width').value),bs=bighaSize();
+ if(!$('length').value||!$('width').value||l<=0||w<=0){$('areaOutput').innerHTML='<p class="note">দৈর্ঘ্য ও প্রস্থ ফুটে সঠিকভাবে লিখুন।</p>';return;}
+ const sqft=l*w, dis=sqft/435.6;
+ $('areaOutput').innerHTML=`<div class="results">
+ <div class="metric"><small>বর্গফুট</small><strong>${fmt(sqft,2)}</strong></div>
+ <div class="metric"><small>ডেসিমিল</small><strong>${fmt(dis,4)}</strong></div>
+ <div class="metric"><small>বিঘা</small><strong>${fmt(dis/bs,6)}</strong></div>
+ <div class="metric"><small>একর</small><strong>${fmt(dis/100,6)}</strong></div></div>`;
+}
+function resetCalc(){$('amount').value='';$('unit').value='dismil';$('output').innerHTML='<div class="hint">আপনার ফলাফল এখানে দেখা যাবে।</div>';}
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){navigator.serviceWorker.register('./sw.js').catch(()=>{});}
+</script>
+</body></html>
